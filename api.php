@@ -18,7 +18,7 @@ const ENABLE_INSERT = 1; // Whether INSERT queries are enabled. 1 = Enable, 0 = 
 const ENABLE_UPDATE = 1; // Whether UPDATE queries are enabled. 1 = Enable, 0 = Disable
 const ENABLE_DELETE = 1; // Whether DELETE queries are enabled. 1 = Enable, 0 = Disable
 const ENABLE_SP = 1;  // Whether running stored procedures are enabled. 1 = Enable, 0 = Disable
-const API_VERSION = 1;
+const API_VERSION = 1.1;
 
 const SELECT_QUERY = 'SELECT';
 const INSERT_QUERY = 'INSERT';
@@ -98,6 +98,8 @@ try {
         if (!isset($postData['query'])) {
             throw new Exception('\'query\' field is required');
         }
+        customLog('Received query request:');
+        customLog(json_encode($postData));
         $query = $postData['query'];
         if (!isset($postData['params'])) {
             $params = [];
@@ -129,15 +131,18 @@ try {
                 ]);
                 break;
         }
+        customLog('Query successfully executed!');
     }
 } catch (PDOException $e) {
     // Report all PDO driver exceptions
     header("HTTP/1.0 500 Internal Server Error");
     echo json_encode(['success' => false, 'msg' => $e->getMessage()]);
+    customLog('Query execution failed. ERROR: ' . $e->getMessage() . '!');
 } catch (Exception $e) {
     // Catch all exceptions and return 400 response
     header("HTTP/1.0 400 Bad Request");
     echo json_encode(['success' => false, 'msg' => $e->getMessage()]);
+    customLog('Query execution failed. ERROR: ' . $e->getMessage() . '!');
 }
 
 /**
@@ -240,13 +245,34 @@ function getQueryType($query)
  * @param $d
  * @return array|string
  */
-function utf8ize($d) {
+function utf8ize($d)
+{
     if (is_array($d)) {
         foreach ($d as $k => $v) {
             $d[$k] = utf8ize($v);
         }
-    } else if (is_string ($d)) {
+    } else if (is_string($d)) {
         return utf8_encode($d);
     }
     return $d;
+}
+
+/**
+ * Simple logger which saves date wise query request logs into logs folder
+ *
+ * @param $data
+ */
+function customLog($data)
+{
+    try {
+        if (!is_dir('logs')) {
+            mkdir('logs');
+        }
+        $errorFile = 'logs' . DIRECTORY_SEPARATOR . date('Y-m-d') . '_query_request.log';
+        if (!file_exists($errorFile)) {
+            touch($errorFile);
+        }
+        error_log('[' . date('Y-m-d H:i O'). '] ' .$data . "\n", 3, $errorFile);
+    } catch (Exception $e) {
+    }
 }
