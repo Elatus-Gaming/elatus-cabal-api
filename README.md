@@ -12,6 +12,7 @@ Elatus Cabal Admin tool.
 * URL key based security system so that only an application with the right key can access it's features.
 * SQL query type based permission system. 
 Hence if you wish to give permission to only view data all queries except ``SELECT`` can be denied from being executed.
+* Logging of each and every SQL query execute request into date-wise log files for future reference.
 
 ## Running the API
 * Download the latest code from [here](https://github.com/Elatus-Gaming/elatus-cabal-api/archive/master.zip).
