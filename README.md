@@ -42,10 +42,22 @@ extension=php_pdo_sqlsrv_72_ts.dll
 * Copy ``api.php`` to ``XamppInstallationDrive:\xampp\htdocs`` which is the root directory of your web server.
 * Follow the remaining steps mentioned in the ``Running the API`` section.
 
-## Installing required software under Linux and running the API
+## Installing required software under CentOS and running the API
 
 * Install Apache + PHP by referring [this guide](https://tecadmin.net/install-apache-php-on-centos-fedora/).
-* Install PHP Sqlsrv PDO drivers by referring [this guide](https://www.danhendricks.com/2017/11/installing-microsoft-sql-server-php-extensions-plesk-onyx/).
+* Install PHP Sqlsrv PDO drivers by running following commands:
+
+```
+sudo su
+curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/mssql-release.repo
+exit
+sudo ACCEPT_EULA=Y yum install msodbcsql
+sudo yum install unixODBC-devel
+yum groupinstall "Development Tools"
+sudo pecl install sqlsrv pdo_sqlsrv
+sudo echo "extension= pdo_sqlsrv.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+sudo echo "extension= sqlsrv.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+```
 * Copy ``api.php`` to ``/var/www/html`` which is the root directory of your web server.
 * Follow the remaining steps mentioned in the ``Running the API`` section.
 
