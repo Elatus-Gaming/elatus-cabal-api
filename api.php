@@ -37,9 +37,7 @@ header('Content-Type: application/json');
 $databaseConnectionOptions = [
     PDO::ATTR_TIMEOUT => 30,
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::SQLSRV_ATTR_DIRECT_QUERY => false,
-    PDO::SQLSRV_ATTR_FETCHES_NUMERIC_TYPE => true
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ];
 
 try {
